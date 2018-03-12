@@ -1,3 +1,4 @@
+from plone import api
 from plone.fieldsets.interfaces import IFormFieldsets
 from zope.formlib import form
 
@@ -11,13 +12,17 @@ class FieldsetsEditForm(EditForm):
         # First part is copied from zope.formlib.form.EditForm licensed under
         # the ZPL 2.1
         self.adapters = {}
+        # SFU - fixing this for Imaging handling control panel, hopefully
+        # not breaking anything else.
+        portal = api.portal.get()
         # In order to support fieldsets, we need to setup the widgets on all
         # the fieldsets as well.
         if self.is_fieldsets():
             self.widgets = None
             for fieldset in self.form_fields.fieldsets:
                 fieldset.widgets = form.setUpEditWidgets(
-                    fieldset, self.prefix, self.context, self.request,
+                    #fieldset, self.prefix, self.context, self.request,
+                    fieldset, self.prefix, portal, self.request,
                     adapters=self.adapters, ignore_request=ignore_request
                     )
                 if self.widgets is None:
@@ -26,7 +31,8 @@ class FieldsetsEditForm(EditForm):
                     self.widgets += fieldset.widgets
         else:
             self.widgets = form.setUpEditWidgets(
-                self.form_fields, self.prefix, self.context, self.request,
+                #self.form_fields, self.prefix, self.context, self.request,
+                self.form_fields, self.prefix, portal, self.request,
                 adapters=self.adapters, ignore_request=ignore_request
                 )
 
