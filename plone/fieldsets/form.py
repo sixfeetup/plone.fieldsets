@@ -14,7 +14,9 @@ class FieldsetsEditForm(EditForm):
         self.adapters = {}
         # SFU - fixing this for Imaging handling control panel, hopefully
         # not breaking anything else.
-        portal = api.portal.get()
+        context = self.context
+        if '@@imaging-controlpanel' in self.request.steps:
+            context = api.portal.get()
         # In order to support fieldsets, we need to setup the widgets on all
         # the fieldsets as well.
         if self.is_fieldsets():
@@ -22,7 +24,7 @@ class FieldsetsEditForm(EditForm):
             for fieldset in self.form_fields.fieldsets:
                 fieldset.widgets = form.setUpEditWidgets(
                     #fieldset, self.prefix, self.context, self.request,
-                    fieldset, self.prefix, portal, self.request,
+                    fieldset, self.prefix, context, self.request,
                     adapters=self.adapters, ignore_request=ignore_request
                     )
                 if self.widgets is None:
@@ -32,7 +34,7 @@ class FieldsetsEditForm(EditForm):
         else:
             self.widgets = form.setUpEditWidgets(
                 #self.form_fields, self.prefix, self.context, self.request,
-                self.form_fields, self.prefix, portal, self.request,
+                self.form_fields, self.prefix, context, self.request,
                 adapters=self.adapters, ignore_request=ignore_request
                 )
 
